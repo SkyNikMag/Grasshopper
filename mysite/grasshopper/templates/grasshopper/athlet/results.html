@@ -1,0 +1,173 @@
+{% extends "grasshopper/base.html" %}
+
+{% block content %}
+<h1 style="color: darkorange;">Результаты спортсменов</h1>
+
+<div class="search-container">
+    <form method="get" action="{% url 'grasshopper:results_view' %}" class="search-form">
+        <input type="text" name="search" class="search-input" placeholder="Поиск по имени, фамилии, команде...">
+        <button type="submit" class="search-button">Поиск</button>
+    </form>
+</div>
+
+{% if athletes %}
+    <form id="resultsForm" method="post">
+        {% csrf_token %}
+
+        <!-- Прокручиваемый блок для списка спортсменов -->
+        <div class="athletes-results-scroll">
+            {% for athlete in athletes %}
+                <div class="athlete-result-row">
+                    <span class="athlete-name">{{ athlete.name }}</span>
+                    <div id="results-container-{{ athlete.id }}" class="results-container">
+                        {% for result in athlete.decoded_results %}
+                            <input type="text" name="results_{{ athlete.id }}" class="result-input" value="{{ result }}" placeholder="см" readonly>
+                        {% endfor %}
+                        <input type="text" name="results_{{ athlete.id }}" class="result-input" placeholder="см">
+                        <button type="button" class="add-button" onclick="addInputField({{ athlete.id }})">+</button>
+                    </div>
+                    {% if athlete.average_result %}
+                        <span class="average-result">Средний результат: {{ athlete.average_result }}</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Контейнер для кнопки сохранения и сообщения -->
+        <div class="save-container">
+            <button type="submit" class="save-button">Сохранить</button>
+            <span id="popup-message" class="popup-message">Результаты сохранены</span>
+        </div>
+    </form>
+{% else %}
+    <p>Список спортсменов пуст.</p>
+{% endif %}
+
+<script>
+function addInputField(athleteId) {
+    const container = document.getElementById(`results-container-${athleteId}`);
+    const input = document.createElement("input");
+    input.type = "text";
+    input.name = `results_${athleteId}`;
+    input.classList.add("result-input");
+    input.placeholder = "см";
+    container.insertBefore(input, container.querySelector(".add-button"));
+}
+
+document.getElementById("resultsForm")?.addEventListener("submit", async function(event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+
+    const response = await fetch("{% url 'grasshopper:results_view' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: formData,
+    });
+
+    if (response.ok) {
+        const popupMessage = document.getElementById("popup-message");
+        popupMessage.style.display = "inline-block";
+        setTimeout(() => {
+            popupMessage.style.display = "none";
+        }, 2000);
+    }
+});
+</script>
+
+<style>
+    .search-container {
+        margin-bottom: 20px;
+    }
+
+    .search-form {
+        display: flex;
+        width: 100%;
+        max-width: 400px;
+        margin: 10px 0 15px 0;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px;
+        border: 2px solid #ddd;
+        border-radius: 5px 0 0 5px;
+        outline: none;
+        margin: 0;
+    }
+
+    .search-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: orange;
+        color: white;
+        border: none;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .search-button:hover {
+        background-color: darkorange;
+    }
+
+    .athletes-results-scroll {
+        max-height: 595px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 4px;
+    }
+
+    .athlete-result-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .athlete-name {
+        flex: 0 0 150px;
+        font-weight: bold;
+    }
+
+    .results-container {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+    }
+
+    .result-input {
+        width: 50px;
+        text-align: center;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        outline: none;
+    }
+
+    .add-button {
+        padding: 5px;
+        font-size: 16px;
+    }
+
+    .save-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .save-button {
+        padding: 10px 20px;
+        background-color: darkorange;
+    }
+
+    .popup-message {
+        display: none;
+        font-size: 16px;
+        color: green;
+    }
+</style>
+
+{% endblock %}

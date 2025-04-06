@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <style>
+        /* styles.css */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('https://cdn.promodj.com/afs/5bc586ef8055419ec5a5146cdef6900412%3Aresize%3A2000x2000%3Asame%3A5473bd') no-repeat center center/cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .register-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px 30px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            color: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            text-align: center;
+            color: orange; /* Оранжевый цвет для текста */
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-transform: uppercase;
+            text-decoration: underline; /* Подчеркивание текста */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+            outline: none;
+            caret-color: orange;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-group input:focus {
+            border-color: orange;
+        }
+
+        .form-actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .form-actions button {
+            width: 100%;
+            padding: 10px;
+            background: orange;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .form-actions button:hover {
+            background: darkorange;
+        }
+
+        .form-actions p {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .form-actions a {
+            color: orange; /* Цвет текста оранжевый */
+            text-decoration: none; /* Убираем подчеркивание */
+            font-size: 14px;
+            display: inline-block; /* Сохраняем в одну строку */
+            margin-top: 10px;
+            transition: color 0.3s ease; /* Плавный переход цвета */
+        }
+
+        @keyframes vibration {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-0.5px); }
+            50% { transform: translateX(0.5px); }
+            75% { transform: translateX(-0.5px); }
+            100% { transform: translateX(0.5px); }
+        }
+
+        .form-actions a:hover {
+            color: orange; /* Цвет текста становится желтым */
+            animation: vibration 0.2s; /* Применяем анимацию вибрации */
+        }
+
+        .messages {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 15px;
+            color: red;
+        }
+
+        .messages .message {
+            margin-bottom: 10px;
+        }
+
+        .messages .message.error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid red;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        /* Добавлены отступы и стили для сообщений */
+        .form-group input,
+        .form-group select {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Регистрация</h2>
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_username">Название соревнований:</label>
+                {{ form.username }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_password">Пароль:</label>
+                {{ form.password }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_password_confirm">Подтверждение пароля:</label>
+                {{ form.password_confirm }}
+            </div>
+
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <button type="submit">Зарегистрироваться</button>
+                <p>Уже есть аккаунт? <a href="{% url 'grasshopper:competition_login' %}">Войти</a></p>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

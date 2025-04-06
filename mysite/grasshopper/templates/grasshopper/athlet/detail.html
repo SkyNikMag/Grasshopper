@@ -1,0 +1,97 @@
+<!-- templates/grasshopper/athlet/detail.html -->
+{% extends "grasshopper/base.html" %}
+
+{% block title %}{{ athlet.name }}{% endblock %}
+
+{% block content %}
+<div class="athlet-detail-wrapper">
+    <div class="athlet-detail-container">
+        <h1>{{ athlet.name }}</h1>
+        <div class="athlet-info">
+            <p><strong>Пол:</strong> {{ athlet.get_gender_display }}</p>
+            <p><strong>Разряд/звание:</strong> {{ athlet.get_rank_display }}</p>
+            <p><strong>Дата рождения:</strong> {{ athlet.date_birthday }}</p>
+            <p><strong>Команда:</strong> {{ athlet.team }}</p>
+            <p><strong>Регион:</strong> {{ athlet.region }}</p>
+        </div>
+        <div class="athlet-actions">
+            <a href="{% url 'grasshopper:athlet_change' athlet.id %}" class="action-button edit">Изменить данные спортсмена</a>
+            <a href="{% url 'grasshopper:athlet_delete' athlet.id %}" class="action-button delete">Удалить спортсмена</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Общий стиль для контейнера данных */
+    .athlet-detail-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 78vh;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.05); /* Прозрачный фон */
+    }
+
+    .athlet-detail-container {
+        padding: 30px;
+        width: 600px;
+        background-color: rgba(255, 255, 255, 0.1); /* Цвет в стиле сайта */
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        color: white; /* Цвет текста */
+    }
+
+    .athlet-detail-container h1 {
+        text-align: center;
+        color: #FFA500; /* Оранжевый цвет заголовка */
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .athlet-info p {
+        font-size: 16px;
+        margin: 10px 0;
+    }
+
+    .athlet-info strong {
+        color: darkorange; /* Выделение названий полей */
+    }
+
+    .athlet-actions {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .action-button {
+        text-decoration: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 5px;
+        color: white;
+        text-align: center;
+        display: inline-block;
+    }
+
+    .action-button.edit {
+        background-color: #FFA500; /* Оранжевый для кнопки "Изменить" */
+    }
+
+    .action-button.edit:hover {
+        background-color: #FF8C00; /* Более тёмный оранжевый при наведении */
+    }
+
+    .action-button.delete {
+        background-color: red; /* Красный для кнопки "Удалить" */
+    }
+
+    .action-button.delete:hover {
+        background-color: darkred; /* Тёмно-красный при наведении */
+    }
+
+    a {
+        color: darkorange;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends "grasshopper/base.html" %}
+{% block title %}Управление Спортсменами{% endblock %}
+
+{% block content %}
+<style>
+    /* Стили для формы поиска */
+    .search-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .search-form {
+        display: flex;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px;
+        border: 2px solid #ddd;
+        border-radius: 5px 0 0 5px;
+        outline: none;
+    }
+
+
+    .search-button:hover {
+        background-color: darkorange;
+    }
+
+    /* Стили для списка спортсменов */
+    .athlete-list {
+        max-height: 600px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+    .athlete-item {
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .athlete-item h2 {
+        margin-bottom: 10px;
+    }
+
+    .athlete-item h3 {
+        font-weight: normal;
+        margin-top: 5px;
+    }
+
+    /* Уведомление при пустом списке */
+    .empty-list {
+        font-size: 16px;
+        color: #888;
+        text-align: center;
+    }
+
+    /* Стили для формы поиска */
+    .search-container {
+        display: flex;
+        justify-content: flex-start; /* Выравнивание по левому краю */
+        margin-bottom: 20px;
+    }
+
+    .search-form {
+        display: flex;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px;
+        border: 2px solid #ddd;
+        border-radius: 5px 0 0 5px;
+        outline: none;
+        margin: 0;
+    }
+
+    .search-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: orange;
+        color: white;
+        border: none;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        margin: 0;
+    }
+
+
+
+</style>
+
+<h1 style="color: darkorange;">{{ request.user.username }}</h1>
+
+<!-- Форма поиска -->
+<div class="search-container">
+    <form method="get" action="{% url 'grasshopper:athlet_list' %}" class="search-form">
+        <input type="text" name="search" class="search-input" placeholder="Поиск по имени, фамилии, команде...">
+        <button type="submit" class="search-button">Поиск</button>
+    </form>
+</div>
+
+<!-- Список спортсменов -->
+{% if athlets %}
+    <div class="athlete-list">
+        {% for athlet in athlets %}
+            <div class="card">
+                <div class="athlete-item">
+                    <h2>
+                        <a href="{% url 'grasshopper:athlet_detail' athlet.id %}">
+                            {{ athlet.name }}
+                        </a>
+                    </h2>
+                    <h3>Команда: {{ athlet.team }}</h3>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="empty-list">Список спортсменов пуст.</p>
+{% endif %}
+
+{% endblock %}

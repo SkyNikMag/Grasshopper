@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Grasshopper{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/grasshopper.css' %}">
+    <style>
+        /* Основные стили для страницы */
+        html, body {
+            background: url('https://cdn.promodj.com/afs/5bc586ef8055419ec5a5146cdef6900412%3Aresize%3A2000x2000%3Asame%3A5473bd') no-repeat center center/cover;
+            html, body {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: hidden; /* Отключаем прокрутку на контейнере */
+        }
+
+        #sidebar {
+            height: auto;
+            width: 240px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            margin-right: 20px;
+            border-radius: 5px;
+            justify-content: space-between;
+
+        }
+
+        #content {
+            flex-grow: 1;
+            height: 820px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 5px;
+            overflow-y: auto; /* Прокрутка только внутри контента */
+        }
+
+
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+            margin-top: auto; /* Это фиксирует футер внизу */
+        }
+
+
+        #sidebar h2 {
+            margin: 0;
+            text-align: center;
+            color: white;
+        }
+
+        #sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Центрирование кнопок */
+        }
+
+        #sidebar button,
+        #sidebar a {
+            display: block;
+            text-decoration: none;
+            color: orange; /* Черный текст по умолчанию */
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            margin: 5px 0;
+            text-align: center;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s; /* Добавлено плавное изменение цвета текста */
+            width: 180px; /* Фиксированная ширина для всех кнопок */
+            box-sizing: border-box; /* Учет padding в размерах */
+        }
+
+
+        #sidebar button:hover,
+        #sidebar a:hover {
+            background-color: orange; /* Оранжевый фон при наведении */
+            color: white; /* Белый текст при наведении */
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 50%;
+            max-width: 600px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #filter-button {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+            margin: 0 0 10px 10px;
+        }
+
+        .filter-field {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+
+        /* Стили для меток фильтра */
+        .filter-label {
+            color: darkorange; /* Цвет текста в стиле сайта */
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* Стили для полей фильтра (select) */
+        #filterModal select {
+            background-color: rgba(0, 0, 0, 0.7); /* Тёмный фон в стиле сайта */
+            color: white; /* Белый текст */
+            border: 1px solid orange; /* Оранжевая граница */
+            border-radius: 5px; /* Закругленные углы */
+            padding: 5px;
+            margin-bottom: 10px; /* Отступ между полями */
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        /* При наведении на поле */
+        #filterModal select:hover {
+            border-color: white; /* Белая граница при наведении */
+        }
+
+        /* Стили для вариантов (option) */
+        #filterModal option {
+            background-color: rgba(0, 0, 0, 0.8); /* Фон в стиле сайта */
+            color: white; /* Белый текст */
+        }
+
+        /* При выборе активного поля */
+        #filterModal select:focus {
+            outline: none;
+            border-color: orange; /* Оранжевая граница при фокусе */
+        }
+
+
+        /* Стиль для кнопки "Выйти" */
+        .logout-container {
+            margin-top: 100%; /* Отправляем контейнер с кнопкой вниз */
+            text-align: center; /* Центрируем кнопку */
+            display: flex;
+            height: 150px;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .logout-button {
+            background-color: #ff4b4b; /* Красный цвет */
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px; /* Слегка закругленные углы */
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            width: 180px; /* Совпадает с шириной остальных кнопок */
+            box-sizing: border-box; /* Учет padding в размерах */
+        }
+
+        #sidebar .logout-button:hover { /* Уточненный селектор для кнопки "Выход" */
+            background-color: #ff0000; /* Ярко-красный фон при наведении */
+            color: white; /* Белый текст при наведении */
+        }
+
+        .div_protocol{
+            margin: 0 0 0 30px;
+        }
+
+
+
+        #filter-button:hover {
+            background-color: darkorange;
+        }
+
+        /* Адаптация кнопок и ссылок */
+        a, button {
+            text-decoration: none;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.7);
+            margin: 5px 0;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        a:hover, button:hover {
+            background-color: orange;
+        }
+
+        /* Убираем черную обводку */
+        a:focus, button:focus {
+            outline: none;
+        }
+
+        /* Стили для карточек спортсменов */
+        .card {
+            color: #000; /* Черный текст */
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Легкая тень для выделения */
+        }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        a.logout-button:hover {
+            background-color: red;
+        }
+
+        /* Основной контейнер кастомного select */
+.custom-select {
+    position: relative;
+    width: 200px;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Триггер для отображения текущего выбранного элемента */
+.select-trigger {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid orange;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.3s;
+}
+
+/* При наведении на триггер */
+.select-trigger:hover {
+    background-color: orange;
+}
+
+/* Список опций */
+.options {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 1px solid orange;
+    border-radius: 5px;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 10;
+}
+
+/* Опции внутри списка */
+.options .option {
+    padding: 10px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-bottom: 1px solid orange;
+    transition: background-color 0.3s;
+}
+
+/* Последняя опция без границы */
+.options .option:last-child {
+    border-bottom: none;
+}
+
+/* При наведении на опцию */
+.options .option:hover {
+    background-color: orange;
+    color: white;
+}
+
+/* Состояние открытого списка */
+.custom-select.open .options {
+    max-height: 200px; /* Высота списка */
+    opacity: 1;
+    visibility: visible;
+}
+
+        /* Анимация появления фильтров */
+
+.modal.show {
+    display: block;
+    opacity: 1;
+}
+
+        .dropdown-content {
+    display: none; /* Скрыто по умолчанию */
+    opacity: 0; /* Прозрачно */
+    transform: translateY(-10px); /* Чуть выше начального положения */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Плавные переходы */
+}
+
+.dropdown-content.show {
+    display: block; /* Отображается */
+    opacity: 1; /* Полностью видно */
+    transform: translateY(0); /* Возвращается в начальное положение */
+}
+        #printPopup {
+            display: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>
+
+    </header>
+
+    <div id="container">
+        <div id="sidebar">
+            <h2 style="margin: 0 0 25px 0;">Быстрые Действия</h2>
+            <ul>
+                <button id="filter-button" onclick="openFilterModal()">Фильтр</button>
+                <li><a href="{% url 'grasshopper:athlet_add' %}" class="link">Добавить нового спортсмена</a></li>
+                <li><a href="{% url 'grasshopper:athlet_list' %}" class="link">Просмотреть всех спортсменов</a></li>
+            </ul>
+            <h1 class="line_fast"></h1>
+            <ul>
+                <li class="div_results"><a href="{% url 'grasshopper:results_view' %}" class="header-button" onclick="openResultsPopup()">Результаты</a></li>
+
+            </ul>
+            <div class="div_protocol">
+                <button onclick="openPrintPopup()">Протоколы</button>
+            </div>
+
+
+            <!-- Кнопка Выйти снизу столбца -->
+            <div class="logout-container">
+                <a href="{% url 'grasshopper:logout_view' %}" class="logout-button">Выйти</a>
+            </div>
+        </div>
+
+        <div id="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Управление Спортсменами Grasshopper</p>
+    </footer>
+
+    <!-- Модальное окно для фильтра -->
+    <div id="filterModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeFilterModal()">&times;</span>
+            <h2 style="margin: 0 0 25px 0;">Фильтр</h2>
+            <form method="get" action=" ">
+                <div class="filter-field">
+                    <label class="filter-label" for="team">Команда:</label>
+                    <div class="select-wrapper" onclick="toggleDropdown()">
+                        <select name="team" id="team">
+                            <option value="">Все</option>
+                            {% for team in teams %}
+                                <option value="{{ team }}" {% if request.GET.team == team %}selected{% endif %}>{{ team }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-field">
+                    <label class="filter-label" for="region">Регион:</label>
+                    <div class="select-wrapper" onclick="toggleDropdown(this)">
+                        <select name="region" id="region">
+                            <option value="">Все</option>
+                            {% for region in regions %}
+                                <option value="{{ region }}" {% if request.GET.region == region %}selected{% endif %}>{{ region }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-field">
+                    <label class="filter-label" for="gender">Пол:</label>
+                    <div class="select-wrapper" onclick="toggleDropdown(this)">
+                        <select name="gender" id="gender">
+                            <option value="">Все</option>
+                            <option value="MN" {% if request.GET.gender == "MN" %}selected{% endif %}>Мужской</option>
+                            <option value="WN" {% if request.GET.gender == "WN" %}selected{% endif %}>Женский</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-field">
+                    <label class="filter-label" for="age">Возраст:</label>
+                    <div class="select-wrapper" onclick="toggleDropdown(this)">
+                        <select name="age" id="age">
+                            <option value="">Все</option>
+                            <option value="under_24" {% if request.GET.age == "under_24" %}selected{% endif %}>До 24 лет</option>
+                            <option value="over_24" {% if request.GET.age == "over_24" %}selected{% endif %}>Старше 24 лет</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-field">
+                    <label class="filter-label" for="order_by">Сортировать по:</label>
+                    <div class="select-wrapper" onclick="toggleDropdown(this)">
+                        <select name="order_by" id="order_by">
+                            <option value="">Нет</option>
+                            <option value="name" {% if request.GET.order_by == "name" %}selected{% endif %}>Алфавиту</option>
+                            <option value="date_birthday" {% if request.GET.order_by == "date_birthday" %}selected{% endif %}>Возрасту</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" id="apply-filter-button">Применить фильтр</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Всплывающее окно -->
+    <div id="printPopup" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span onclick="closePrintPopup()" class="close">×</span>
+            <h2>Выберите тип протокола для печати:</h2>
+            <form id="printForm" method="get" action="{% url 'grasshopper:print_protocol' %}">
+                <select name="protocol_type" id="protocol_type">
+                    <option value="male">Мужской зачет</option>
+                    <option value="female">Женский зачет</option>
+                    <option value="team">Командный зачет</option>
+                    <option value="junior_male">Юниорский мужской зачет</option>
+                    <option value="junior_female">Юниорский женский зачет</option>
+                    <option value="overall">Общий зачет</option>
+                </select>
+                <button type="submit">Показать протокол</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        function openFilterModal() {
+            document.getElementById("filterModal").style.display = "block";
+        }
+
+        function closeFilterModal() {
+            document.getElementById("filterModal").style.display = "none";
+        }
+
+        // Закрытие модального окна при нажатии вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById("filterModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        function openPrintPopup() {
+            document.getElementById("printPopup").style.display = "block";
+        }
+
+        function closePrintPopup() {
+            document.getElementById("printPopup").style.display = "none";
+        }
+
+        function openResultsPopup() {
+            console.log("Popup opened");  // Для отладки
+            const userChoice = prompt("Выберите результаты для отображения:\n1 - Все результаты\n2 - Результаты полуфинала\n3 - Результаты финала");
+            let selection = "all";  // Значение по умолчанию
+
+
+   if (userChoice === "2") {
+                selection = "semifinal";
+            } else if (userChoice === "3") {
+                selection = "final";
+            }
+
+            // Перенаправление на URL с типом результата в качестве параметра
+            window.location.href = `/grasshopper/results/?type=${selection}`;
+            event.preventDefault();  // Предотвращаем переход по ссылке
+        }
+
+
+        document.querySelectorAll('.custom-select').forEach(select => {
+            const trigger = select.querySelector('.select-trigger');
+            const options = select.querySelectorAll('.option');
+            const hiddenInput = select.querySelector('input[type="hidden"]');
+
+            // Открытие/закрытие списка
+            trigger.addEventListener('click', () => {
+                select.classList.toggle('open');
+            });
+
+            // Выбор опции
+            options.forEach(option => {
+                option.addEventListener('click', () => {
+                    hiddenInput.value = option.getAttribute('data-value'); // Установка значения
+                    trigger.textContent = option.textContent; // Отображение выбранного
+                    select.classList.remove('open'); // Закрытие списка
+                });
+            });
+
+            // Закрытие списка при клике вне его
+            document.addEventListener('click', e => {
+                if (!select.contains(e.target)) {
+                    select.classList.remove('open');
+                }
+            });
+        });
+
+        function openFilterModal() {
+            var modal = document.getElementById("filterModal");
+            modal.style.display = "block"; // Открываем модальное окно
+            modal.classList.remove("show"); // Убираем класс show (если он был)
+            setTimeout(function() {
+                modal.classList.add("show"); // Добавляем класс show с задержкой
+            }, 0); // Чтобы убедиться, что обновление стиля произойдёт после изменения display
+        }
+
+        function closeFilterModal() {
+            var modal = document.getElementById("filterModal");
+            modal.classList.remove("show"); // Убираем класс show
+            modal.style.display = "none"; // Скрываем окно
+        }
+        // Закрытие модального окна при нажатии вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById("filterModal");
+            if (event.target === modal) {
+                closeFilterModal();
+            }
+        };
+
+       function toggleDropdown() {
+    const dropdown = document.getElementById("dropdownMenu"); // Укажите правильный ID
+    if (dropdown.classList.contains("show")) {
+        dropdown.classList.remove("show");
+        setTimeout(() => dropdown.style.display = "none", 300); // Подождите завершения анимации
+    } else {
+        dropdown.style.display = "block"; // Отображаем список перед началом анимации
+        setTimeout(() => dropdown.classList.add("show"), 10); // Небольшая задержка для плавности
+    }
+}
+
+        document.addEventListener("click", function(event) {
+    const dropdown = document.getElementById("dropdownMenu");
+    const button = event.target.closest("button"); // Проверяем, кликнули ли по кнопке
+    if (!dropdown.contains(event.target) && !button) {
+        dropdown.classList.remove("show");
+        setTimeout(() => dropdown.style.display = "none", 300); // Закрыть с задержкой
+    }
+});
+
+
+    </script>
+</body>
+</html>

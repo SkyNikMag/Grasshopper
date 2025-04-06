@@ -1,0 +1,93 @@
+<!-- templates/grasshopper/athlet/delete_confirm.html -->
+{% extends "grasshopper/base.html" %}
+
+{% block title %}Подтверждение удаления{% endblock %}
+
+{% block content %}
+<div class="delete-confirm-wrapper">
+    <div class="delete-confirm-container">
+        <h1>Удалить спортсмена: {{ athlet.name }}?</h1>
+        <p>Вы уверены, что хотите удалить данные спортсмена <strong>"{{ athlet.name }}"</strong>? Это действие <span class="warning">нельзя отменить</span>.</p>
+
+        <form method="post" class="delete-form">
+            {% csrf_token %}
+            <button type="submit" class="confirm-delete">Подтвердить удаление</button>
+            <a href="{% url 'grasshopper:athlet_list' %}" class="cancel-delete">Отмена</a>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Контейнер для центрирования */
+    .delete-confirm-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 78vh;
+        background-color: rgba(255, 255, 255, 0.05); /* Фон в стиле сайта */
+    }
+
+    /* Стили для формы подтверждения */
+    .delete-confirm-container {
+        padding: 30px;
+        max-width: 500px;
+        text-align: center;
+        background-color: rgba(255, 255, 255, 0.1); /* Полупрозрачный фон */
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        color: white;
+    }
+
+    .delete-confirm-container h1 {
+        font-size: 24px;
+        color: #FFA500; /* Оранжевый цвет заголовка */
+        margin-bottom: 20px;
+    }
+
+    .delete-confirm-container p {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .delete-confirm-container .warning {
+        color: red; /* Выделение текста предупреждения */
+        font-weight: bold;
+    }
+
+    /* Кнопки */
+    .delete-form {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+
+    .confirm-delete {
+        background-color: red;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .confirm-delete:hover {
+        background-color: darkred; /* Тёмно-красный при наведении */
+    }
+
+    .cancel-delete {
+        background-color: #FFA500; /* Оранжевый для кнопки отмены */
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    .cancel-delete:hover {
+        background-color: #FF8C00; /* Тёмно-оранжевый при наведении */
+    }
+</style>
+{% endblock %}

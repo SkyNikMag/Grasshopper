@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('https://cdn.promodj.com/afs/5bc586ef8055419ec5a5146cdef6900412%3Aresize%3A2000x2000%3Asame%3A5473bd') no-repeat center center/cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px 30px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            color: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            font-size: 18px;
+            padding-bottom: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .tab.active {
+            color: orange;
+            border-bottom: 2px solid orange;
+        }
+
+        .tab a {
+            text-decoration: none;
+            color: white;
+            transition: color 0.3s ease;
+        }
+
+        .tab a:hover {
+            color: orange;
+        }
+
+        .error-container {
+            background-color: rgba(255, 0, 0, 0.2);
+            color: red;
+            padding: 10px;
+            border: 1px solid red;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group .custom-select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid white;
+            border-radius: 5px;
+            color: white;
+            outline: none;
+            caret-color: orange;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-group input:focus,
+        .form-group .custom-select:focus {
+            border-bottom-color: orange;
+        }
+
+        .form-group input:hover,
+        .form-group .custom-select:hover {
+            border-bottom-color: orange;
+        }
+
+        .custom-select-wrapper {
+            position: relative;
+            display: inline-block;
+            color: #555;
+            width: 100%;
+        }
+
+        .custom-select {
+            color: #555;
+            position: relative;
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background: transparent;
+            border: 2px solid white; /* Полностью заменяет border-bottom */
+            border-radius: 5px; /* Добавляем радиус для красоты */
+            cursor: pointer;
+            padding-right: 30px; /* Для отступа от стрелки */
+            transition: border-color 0.3s ease, color 0.3s ease;
+            outline: none; /* Убираем выделение фокуса */
+        }
+
+
+        .custom-select::after {
+            content: '▼';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            transition: color 0.3s ease;
+        }
+
+        .custom-select:hover::after {
+            color: orange;
+        }
+
+        .custom-select-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            max-height: 0px;
+            overflow: auto;
+            border: 0px solid white;
+            border-top: none;
+            z-index: 10;
+            transition: max-height 0.3s ease;
+        }
+
+        .custom-select-wrapper.active .custom-select-options {
+            max-height: 120px;
+        }
+
+        .custom-select-option {
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-select-option:hover {
+            background-color: orange;
+        }
+
+        .form-actions {
+            margin-top: 20px;
+        }
+
+        .form-actions button {
+            width: 100%;
+            padding: 10px;
+            background: orange;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .form-actions button:hover {
+            background: darkorange;
+        }
+
+        .form-actions .register-btn {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            color: black;
+            text-align: center;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .form-actions .register-btn:hover {
+            background: orange;
+            color: white;
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .checkbox input {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="tabs">
+            <div class="tab active">Вход</div>
+            <div class="tab"><a href="{% url 'grasshopper:competition_register' %}">Регистрация</a></div>
+        </div>
+
+        {% if messages %}
+            <div class="error-container">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" onsubmit="return submitForm()">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_competition">Название соревнований:</label>
+                <div class="custom-select-wrapper">
+                    <div class="custom-select" onclick="toggleSelect()">Выберите соревнование</div>
+                    <div class="custom-select-options">
+                        {% for user in users %}
+                            <div class="custom-select-option" onclick="selectOption('{{ user.id }}', '{{ user.username }}')">{{ user.username }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <input type="hidden" name="competition" id="competition-input" />
+            </div>
+
+            <div class="form-group">
+                <label for="id_password">Пароль:</label>
+                <input type="password" name="password" id="id_password" placeholder="Введите пароль" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit">Войти</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function toggleSelect() {
+            const wrapper = document.querySelector('.custom-select-wrapper');
+            wrapper.classList.toggle('active');
+        }
+
+        function selectOption(value, text) {
+            const select = document.querySelector('.custom-select');
+            select.textContent = text;
+            document.querySelector('#competition-input').value = value;
+            document.querySelector('.custom-select-wrapper').classList.remove('active');
+        }
+
+        function submitForm() {
+            const competitionInput = document.querySelector('#competition-input').value;
+            const errorContainer = document.querySelector('.error-container');
+
+            if (!competitionInput) {
+                errorContainer.textContent = 'Пожалуйста, выберите соревнование!';
+                errorContainer.style.display = 'block';
+                return false;
+            }
+
+            errorContainer.style.display = 'none';
+            return true;
+        }
+
+        document.addEventListener('click', (event) => {
+            const wrapper = document.querySelector('.custom-select-wrapper');
+            if (!wrapper.contains(event.target)) {
+                wrapper.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

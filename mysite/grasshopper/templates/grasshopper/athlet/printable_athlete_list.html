@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Протокол для печати</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 5px; text-align: center; }
+        .header { margin-top: 20px; }
+        .judge { margin-top: 30px; }
+
+        .judge {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .judge-title {
+            text-align: left;
+            font-size: 20px;
+            margin: 20px 170px 0 170px;
+        }
+
+        .judge-line {
+            border-bottom: 1px solid #000;
+            text-align: center;
+            flex-grow: 1;
+            margin: 20px 200px 0 300px;
+            font-size: 17px;
+        }
+
+
+        /* Center-align title and subtitle */
+        .centered-text {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            @page {
+                margin: 0;
+            }
+            body {
+                margin: 1cm; /* Adjust margins as needed */
+            }
+            /* Hide browser-specific print headers/footers */
+            header, footer {
+                display: none;
+            }
+        }
+
+        /* Style the editable h1 text */
+        #username-display[contenteditable="true"] {
+
+            padding: 0 5px;
+            display: inline-block;
+            cursor: text;
+            font-weight: normal;
+            margin: 10px;
+        }
+
+        p{
+            margin: 10px;
+        }
+    </style>
+    <script>
+        // Function to trigger print and ensure the username is updated
+        function onPrint() {
+            // No need to explicitly update the username here, as contenteditable allows real-time editing
+            window.print(); // Trigger the print dialog
+        }
+    </script>
+</head>
+<body>
+    <div class="centered-text">
+        <!-- Make the username editable directly in the heading -->
+        <h1 id="username-display" contenteditable="true">{{ request.user.username }}</h1>
+        <p>Точность приземления – личная</p>
+        <p>{{ protocol_type }}</p>
+
+    </div>
+
+    <table>
+        <tr>
+            <th>Место</th>
+            <th>ФИО</th>
+            <th>Регион</th>
+            <th>Звание</th>
+            {% for i in max_jumps_range %}
+                <th>Прыжок {{ i|add:1 }}</th>
+            {% endfor %}
+            <th>Сумма</th>
+            <th>Средний результат</th>
+        </tr>
+        {% for athlete in athletes %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ athlete.name }}</td>
+            <td>{{ athlete.region }}</td>
+            <td>{{ athlete.get_rank_display }}</td>
+
+            {% for jump in athlete.decoded_results %}
+                <td>{{ jump }}</td>
+            {% endfor %}
+
+            {% for _ in max_jumps_range %}
+                {% if forloop.counter0 >= athlete.decoded_results|length %}
+                    <td></td>
+                {% endif %}
+            {% endfor %}
+
+            <td>{{ athlete.total_result }}</td>
+            <td>{{ athlete.average_result }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+    <p class="judge">
+        <span class="judge-title">Главный судья</span>
+        <span class="judge-line" contenteditable="true"></span>
+    </p>
+</body>
+</html>

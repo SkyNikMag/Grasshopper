@@ -1,0 +1,87 @@
+{% extends "grasshopper/base.html" %}
+
+{% block title %}Добавить нового спортсмена{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+    <div class="form-container">
+        <h1>Добавить нового спортсмена</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="save" type="submit" style="margin: 25px 0 0 0;">Сохранить</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Основной контейнер для формы */
+    .form-wrapper {
+        display: flex;
+        justify-content: flex-start; /* Смещаем форму ближе к левому краю */
+        align-items: center;
+        height: 100%;
+        padding-left: 25px; /* Отступ от меню */
+    }
+
+    /* Контейнер для самой формы */
+    .form-container {
+        padding: 25px; /* Увеличенный, но не слишком, внутренний отступ */
+        width: 600px; /* Увеличенная ширина формы */
+        background-color: rgba(255, 255, 255, 0.1); /* Цвет формы в стиле сайта */
+        border-radius: 10px; /* Немного более округлённые углы */
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5); /* Тень чуть сильнее */
+    }
+
+    label {
+        color: darkorange; /* Цвет текста меток */
+        font-size: 16px; /* Чуть увеличенный размер текста меток */
+        font-weight: bold;
+        margin-bottom: 8px; /* Немного больше пространства между меткой и полем */
+        display: block; /* Каждая метка над полем ввода */
+    }
+
+    .form-container h1 {
+        text-align: center;
+        color: #FFA500; /* Оранжевый цвет для заголовка */
+        font-size: 28px; /* Чуть больше, чем стандартный заголовок */
+        margin-bottom: 20px; /* Умеренный отступ под заголовком */
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select {
+        width: 100%;
+        padding: 12px; /* Лёгкое увеличение отступов внутри полей */
+        margin-bottom: 15px; /* Пространство между элементами */
+        border-radius: 6px; /* Чуть более округлённые края полей */
+        background-color: rgba(255, 255, 255, 0.9);
+        border: 1px solid #ccc;
+        font-size: 16px; /* Чуть увеличенный шрифт в полях ввода */
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    select:focus {
+        border-color: #FFA500; /* Подсветка при фокусе */
+        outline: none;
+    }
+
+    .save {
+        background-color: #FFA500; /* Основной оранжевый цвет */
+        color: white;
+        padding: 12px; /* Лёгкое увеличение отступов */
+        font-size: 18px; /* Немного увеличенный размер шрифта кнопки */
+        border-radius: 6px; /* Пропорционально округлённые края кнопки */
+        width: 100%;
+        cursor: pointer;
+        border: none;
+        font-weight: bold;
+    }
+
+    .save:hover {
+        background-color: #FF8C00; /* Тёмно-оранжевый при наведении */
+    }
+</style>
+
+{% endblock %}
